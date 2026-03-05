@@ -39,12 +39,7 @@ export function HomeInner() {
   const [autoConnect, setAutoConnect] = useState(false);
   const [tokenSource, setTokenSource] = useState<
     TokenSourceConfigurable | undefined
-  >(() => {
-    if (process.env.NEXT_PUBLIC_LIVEKIT_URL) {
-      return TokenSource.endpoint("/api/token");
-    }
-    return undefined;
-  });
+  >(undefined);
 
   return (
     <>

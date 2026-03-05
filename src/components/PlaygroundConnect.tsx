@@ -26,10 +26,67 @@ const TokenConnect = ({
 }: PlaygroundConnectProps) => {
   const [url, setUrl] = useState<string>("");
   const [token, setToken] = useState<string>("");
+  const [uid, setUid] = useState<string>(
+    process.env.NEXT_PUBLIC_MEMORYLANE_UID || "",
+  );
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCredentials = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/connection-details", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "memorylane-uid": uid,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          playVoiceCue: true,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === "success" && data.data) {
+        setUrl(data.data.serverUrl);
+        setToken(data.data.participantToken);
+      } else {
+        console.error("Failed to fetch credentials", data);
+        alert("Failed to fetch credentials");
+      }
+    } catch (e) {
+      console.error("Error fetching credentials", e);
+      alert("Error fetching credentials");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex left-0 top-0 w-full h-full bg-black/80 items-center justify-center text-center">
       <div className="flex flex-col gap-4 p-8 bg-gray-950 w-full text-white border-t border-gray-900">
+        <div className="flex flex-col gap-2 mb-2 pb-4 border-b border-gray-900">
+          <div className="text-left text-xs text-gray-500 uppercase font-semibold tracking-wider">
+            Auto-Fill Credentials
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={uid}
+              onChange={(e) => setUid(e.target.value)}
+              className="text-white text-sm bg-transparent border border-gray-800 rounded-sm px-3 py-2 flex-grow pointer-events-auto"
+              placeholder="MemoryLane UID"
+            />
+            <Button
+              accentColor={accentColor}
+              disabled={isLoading}
+              onClick={() => {
+                fetchCredentials();
+              }}
+              className="whitespace-nowrap z-10 cursor-pointer pointer-events-auto"
+            >
+              {isLoading ? "Fetching..." : "Fetch"}
+            </Button>
+          </div>
+        </div>
         <div className="flex flex-col gap-2">
           <input
             value={url}
@@ -72,7 +129,7 @@ export const PlaygroundConnect = ({
   accentColor,
   onConnectClicked,
 }: PlaygroundConnectProps) => {
-  const [showCloud, setShowCloud] = useState(true);
+  const [showCloud, setShowCloud] = useState(false);
   const copy = CLOUD_ENABLED
     ? "Connect to playground with LiveKit Cloud or manually with a URL and token"
     : "Connect to playground with a URL and token";
