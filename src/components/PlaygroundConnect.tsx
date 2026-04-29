@@ -30,6 +30,7 @@ const TokenConnect = ({
     process.env.NEXT_PUBLIC_MEMORYLANE_UID || "",
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isCircularDevice, setIsCircularDevice] = useState(false);
 
   const fetchCredentials = async () => {
     setIsLoading(true);
@@ -43,6 +44,7 @@ const TokenConnect = ({
         },
         body: JSON.stringify({
           playVoiceCue: true,
+          isCircularDevice,
         }),
       });
       const data = await response.json();
@@ -85,6 +87,21 @@ const TokenConnect = ({
             >
               {isLoading ? "Fetching..." : "Fetch"}
             </Button>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <input
+              type="checkbox"
+              id="isCircularDevice"
+              checked={isCircularDevice}
+              onChange={(e) => setIsCircularDevice(e.target.checked)}
+              className="w-4 h-4 bg-transparent border border-gray-800 rounded-sm cursor-pointer"
+            />
+            <label
+              htmlFor="isCircularDevice"
+              className="text-sm text-gray-400 cursor-pointer select-none"
+            >
+              Is Circular Device
+            </label>
           </div>
         </div>
         <div className="flex flex-col gap-2">

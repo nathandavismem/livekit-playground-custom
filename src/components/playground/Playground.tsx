@@ -23,6 +23,7 @@ import {
   useSession,
   useAgent,
   useSessionMessages,
+  useParticipantAttribute,
 } from "@livekit/components-react";
 import {
   ConnectionState,
@@ -118,6 +119,73 @@ export default function Playground({
       session.room.localParticipant.setMicrophoneEnabled(
         config.settings.inputs.mic,
       );
+
+      session.room.registerRpcMethod("new_ai_message", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED:(new_ai_message)", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
+
+      session.room.registerRpcMethod("new_animation", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED (new_animation):", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
+
+      session.room.registerRpcMethod("new_viseme", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED (new_viseme):", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
+
+      session.room.registerRpcMethod("new_emotive_animation", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED (new_emotive_animation):", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
+
+      return () => {
+        session.room.unregisterRpcMethod("new_animation");
+        session.room.unregisterRpcMethod("new_viseme");
+        session.room.unregisterRpcMethod("new_ai_message");
+        session.room.unregisterRpcMethod("new_emotive_animation");
+      };
     }
   }, [
     config.settings.inputs.camera,
@@ -164,6 +232,7 @@ export default function Playground({
       </div>
     );
   }, [agent.cameraTrack, config, connectionState]);
+
 
   useEffect(() => {
     document.body.style.setProperty(
@@ -254,6 +323,12 @@ export default function Playground({
   const agentAttributes = useParticipantAttributes({
     participant: agent.internal.agentParticipant ?? undefined,
   });
+
+
+  useEffect(() => {
+    console.log("AGENT STATE", agent.state);
+    
+  }, [agent]);
 
   const settingsTileContent = useMemo(() => {
     return (
