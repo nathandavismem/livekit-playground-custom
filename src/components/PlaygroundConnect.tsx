@@ -31,6 +31,7 @@ const TokenConnect = ({
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isCircularDevice, setIsCircularDevice] = useState(false);
+  const [isPlayVoiceCue, setisPlayVoiceCue] = useState(true);
 
   const fetchCredentials = async () => {
     setIsLoading(true);
@@ -43,7 +44,7 @@ const TokenConnect = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          playVoiceCue: true,
+          playVoiceCue: isPlayVoiceCue,
           isCircularDevice,
         }),
       });
@@ -101,6 +102,21 @@ const TokenConnect = ({
               className="text-sm text-gray-400 cursor-pointer select-none"
             >
               Is Circular Device
+            </label>
+          </div>
+            <div className="flex items-center gap-2 mt-1">
+            <input
+              type="checkbox"
+              id="isPlayVoiceCue"
+              checked={isPlayVoiceCue}
+              onChange={(e) => setisPlayVoiceCue(e.target.checked)}
+              className="w-4 h-4 bg-transparent border border-gray-800 rounded-sm cursor-pointer"
+            />
+            <label
+              htmlFor="isPlayVoiceCue"
+              className="text-sm text-gray-400 cursor-pointer select-none"
+            >
+              Play Voice Cue
             </label>
           </div>
         </div>
