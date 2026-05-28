@@ -112,6 +112,10 @@ export default function Playground({
   }, [autoConnect, hasConnected, startSession]);
 
   useEffect(() => {
+    console.log(agent.attributes, "AGENT ATTRIBUTES");
+  }, [agent.attributes]);
+
+  useEffect(() => {
     if (connectionState === ConnectionState.Connected) {
       session.room.localParticipant.setCameraEnabled(
         config.settings.inputs.camera,
@@ -119,6 +123,21 @@ export default function Playground({
       session.room.localParticipant.setMicrophoneEnabled(
         config.settings.inputs.mic,
       );
+
+      session.room.registerRpcMethod("close_connection", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED:(close_connection)", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
 
       session.room.registerRpcMethod("new_ai_message", async (data) => {
         try {
@@ -233,7 +252,6 @@ export default function Playground({
     );
   }, [agent.cameraTrack, config, connectionState]);
 
-
   useEffect(() => {
     document.body.style.setProperty(
       "--lk-theme-color",
@@ -324,10 +342,8 @@ export default function Playground({
     participant: agent.internal.agentParticipant ?? undefined,
   });
 
-
   useEffect(() => {
     console.log("AGENT STATE", agent.state);
-    
   }, [agent]);
 
   const settingsTileContent = useMemo(() => {
