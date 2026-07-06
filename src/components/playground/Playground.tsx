@@ -124,6 +124,21 @@ export default function Playground({
         config.settings.inputs.mic,
       );
 
+      session.room.registerRpcMethod("open_camera", async (data) => {
+        try {
+          const message = JSON.parse(data.payload);
+
+          console.log("RPC RECEIVED:(open_camera)", message);
+
+          // do your UI update here
+        } catch (err) {
+          console.error("Invalid RPC payload", err);
+        }
+
+        // optional response
+        return JSON.stringify({ ok: true });
+      });
+
       session.room.registerRpcMethod("close_connection", async (data) => {
         try {
           const message = JSON.parse(data.payload);
